@@ -1,6 +1,7 @@
 package com.kelvin.DesafioFinalBootcampJavaSquadra2024.pessoa.service;
 
 import com.kelvin.DesafioFinalBootcampJavaSquadra2024.endereco.entity.EnderecoEntity;
+import com.kelvin.DesafioFinalBootcampJavaSquadra2024.endereco.repository.EnderecoRepository;
 import com.kelvin.DesafioFinalBootcampJavaSquadra2024.exception.ListarException;
 import com.kelvin.DesafioFinalBootcampJavaSquadra2024.pessoa.entity.PessoaEntity;
 import com.kelvin.DesafioFinalBootcampJavaSquadra2024.pessoa.repository.PessoaRepository;
@@ -23,9 +24,11 @@ public class PessoaService {
     private DataSource dataSource;
 
     private PessoaRepository pessoaRepository;
+    private EnderecoRepository enderecoRepository;
 
-    public PessoaService(PessoaRepository pessoaRepository) {
+    public PessoaService(PessoaRepository pessoaRepository, EnderecoRepository enderecoRepository) {
         this.pessoaRepository = pessoaRepository;
+        this.enderecoRepository = enderecoRepository;
     }
 
     public Object buscarPessoa(Long codigoPessoa, String login, Integer status) throws ListarException, SQLException {
@@ -55,23 +58,27 @@ public class PessoaService {
             throw new ListarException("codigoPessoa não pode ser nulo.", HttpStatus.BAD_REQUEST);
         }
 
+        if (!registroCodigoPessoaExisteAtualizar(pessoaEntity.getCodigoPessoa())) {
+            throw new ListarException("Registro " + pessoaEntity.getCodigoPessoa() + " não foi encontrado.", HttpStatus.NOT_FOUND);
+        }
+
         validarPessoa(pessoaEntity);
 
         pessoaRepository.atualizarPessoa(pessoaEntity);
 
-        List<Long> enderecosExistentes = pessoaRepository.buscarEnderecosPorPessoa(pessoaEntity.getCodigoPessoa());
+        List<Long> enderecosExistentes = enderecoRepository.buscarEnderecosPorPessoa(pessoaEntity.getCodigoPessoa());
 
         for (EnderecoEntity endereco : pessoaEntity.getEnderecos()) {
             if (endereco.getCodigoEndereco() != null) {
-                pessoaRepository.atualizarEndereco(endereco);
+                enderecoRepository.atualizarEndereco(endereco);
                 enderecosExistentes.remove(endereco.getCodigoEndereco());
             } else {
-                pessoaRepository.cadastrarEndereco(pessoaEntity, endereco);
+                enderecoRepository.cadastrarEndereco(pessoaEntity, endereco);
             }
         }
 
         for (Long codigoEndereco : enderecosExistentes) {
-            pessoaRepository.excluirEndereco(codigoEndereco);
+            enderecoRepository.excluirEndereco(codigoEndereco);
         }
 
         return pessoaEntity;
@@ -178,6 +185,25 @@ public class PessoaService {
             if (rs.next()) {
                 return rs.getInt(1) > 0;
             }
+        }
+        return false;
+    }
+
+    private boolean registroCodigoPessoaExisteAtualizar(Long codigoPessoa) throws SQLException {
+        String sqlVerificarRegistro = "SELECT COUNT(*) FROM TB_PESSOA WHERE CODIGO_PESSOA = ?";
+
+        try (Connection conexao = dataSource.getConnection();
+             PreparedStatement ps = conexao.prepareStatement(sqlVerificarRegistro)) {
+
+            ps.setLong(1, codigoPessoa);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Erro ao verificar a existência do registro: " + e.getMessage(), e);
         }
         return false;
     }

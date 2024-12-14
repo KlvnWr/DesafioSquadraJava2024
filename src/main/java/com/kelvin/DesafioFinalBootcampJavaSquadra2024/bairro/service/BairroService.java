@@ -108,10 +108,6 @@ public class BairroService {
     }
 
     private boolean registroBairroExiste(Long codigoBairro) throws SQLException, ListarException {
-        if (codigoBairro == null) {
-            throw new ListarException("Não é possível atualizar o registro com o campo CodigoBairro vazio.", HttpStatus.BAD_REQUEST);
-        }
-
         String sqlVerificarRegistro = "SELECT COUNT(*) FROM TB_BAIRRO WHERE CODIGO_BAIRRO = ?";
 
         try (Connection conexao = dataSource.getConnection();
