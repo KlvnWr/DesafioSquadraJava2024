@@ -10,7 +10,7 @@ public class BairroDTO {
     public Long codigoMunicipio;
     public String nome;
     public Integer status;
-    public List<MunicipioDTO> municipio = new ArrayList<>();
+    public MunicipioDTO municipio = new MunicipioDTO();
 
     public BairroDTO() {
     }
@@ -47,11 +47,11 @@ public class BairroDTO {
         this.status = status;
     }
 
-    public List<MunicipioDTO> getMunicipio() {
+    public MunicipioDTO getMunicipio() {
         return municipio;
     }
 
-    public void setMunicipio(List<MunicipioDTO> municipio) {
+    public void setMunicipio(MunicipioDTO municipio) {
         this.municipio = municipio;
     }
 }

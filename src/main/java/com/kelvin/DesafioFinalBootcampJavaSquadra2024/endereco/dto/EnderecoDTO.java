@@ -13,7 +13,7 @@ public class EnderecoDTO {
     public String numero;
     public String complemento;
     public String cep;
-    public List<BairroDTO> bairro = new ArrayList<>();
+    public BairroDTO bairro = new BairroDTO();
 
     public EnderecoDTO() {
     }
@@ -74,11 +74,11 @@ public class EnderecoDTO {
         this.cep = cep;
     }
 
-    public List<BairroDTO> getBairro() {
+    public BairroDTO getBairro() {
         return bairro;
     }
 
-    public void setBairro(List<BairroDTO> bairro) {
+    public void setBairro(BairroDTO bairro) {
         this.bairro = bairro;
     }
 }

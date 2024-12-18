@@ -10,7 +10,7 @@ public class MunicipioDTO {
     private Long codigoUF;
     private String nome;
     private Integer status;
-    private List<UfDTO> uf = new ArrayList<>();
+    private UfDTO uf = new UfDTO();
 
     public Long getCodigoMunicipio() {
         return codigoMunicipio;
@@ -44,11 +44,11 @@ public class MunicipioDTO {
         this.status = status;
     }
 
-    public List<UfDTO> getUf() {
+    public UfDTO getUf() {
         return uf;
     }
 
-    public void setUf(List<UfDTO> uf) {
+    public void setUf(UfDTO uf) {
         this.uf = uf;
     }
 }

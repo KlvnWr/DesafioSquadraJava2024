@@ -181,9 +181,6 @@ public class PessoaRepository{
 
                         if (!enderecoMap.containsKey(codigoEndereco)) {
                             EnderecoDTO endereco = new EnderecoDTO();
-                            List<BairroDTO> bairrosLista = new ArrayList<>();
-                            List<MunicipioDTO> municipioLista = new ArrayList<>();
-                            List<UfDTO> ufLista = new ArrayList<>();
 
                             endereco.setCodigoEndereco(rs.getLong("CODIGO_ENDERECO"));
                             endereco.setCodigoPessoa(pessoa.getCodigoPessoa());
@@ -211,14 +208,11 @@ public class PessoaRepository{
                             uf.setNome(rs.getString("NOME_UF"));
                             uf.setStatus(rs.getInt("STATUS_UF"));
 
-                            bairrosLista.add(bairro);
-                            endereco.setBairro(bairrosLista);
+                            endereco.setBairro(bairro);
 
-                            municipioLista.add(municipio);
-                            bairro.setMunicipio(municipioLista);
+                            bairro.setMunicipio(municipio);
 
-                            ufLista.add(uf);
-                            municipio.setUf(ufLista);
+                            municipio.setUf(uf);
 
                             enderecoMap.put(codigoEndereco, endereco);
                             enderecoLista.add(endereco);
